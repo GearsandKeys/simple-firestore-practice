@@ -27,7 +27,7 @@ function renderCafe(doc){
         e.stopPropagation(); //stops bubbling and propagation
         let id = e.target.parentElement.getAttribute('data-id'); //gets the unique id of the element that we click
         db.collection('cafes').doc(id).delete(); //uses id to grab a single doc and delete it from firestore
-        
+
     }) 
 }
 
@@ -43,7 +43,7 @@ form.addEventListener('submit', (e) => {
     form.name.value = '';
     form.city.value = '';
 })
-db.collection('cafes').get().then((snapshot) => {
+db.collection('cafes').where('city', "==", "Marioland").get().then((snapshot) => { //.Where makes a query checking city for Marioland
     snapshot.docs.forEach(doc => { //cycle through the docs
         renderCafe(doc);
         //console.log(doc.data()) //log each one
