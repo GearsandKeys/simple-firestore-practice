@@ -31,7 +31,18 @@ function renderCafe(doc){
     }) 
 }
 
-// getting Data
+//getting data
+// db.collection('cafes').where('city', "==", "Marioland").orderBy('name').get().then((snapshot) => { 
+//     snapshot.docs.forEach(doc => { //cycle through the docs
+//         renderCafe(doc);
+//         //where('city', "==", "Marioland") would make a query for only Marioland city 
+//         //.orderBy('name') puts them in alphabetical order, beware of how it treats capitals
+//         //console.log(doc.data()) //log each one
+//     })
+// })
+
+
+// saving data
 form.addEventListener('submit', (e) => {
     e.preventDefault() //prevents page refresh
     db.collection('cafes').add({
@@ -43,9 +54,19 @@ form.addEventListener('submit', (e) => {
     form.name.value = '';
     form.city.value = '';
 })
-db.collection('cafes').where('city', "==", "Marioland").get().then((snapshot) => { //.Where makes a query checking city for Marioland
-    snapshot.docs.forEach(doc => { //cycle through the docs
-        renderCafe(doc);
-        //console.log(doc.data()) //log each one
+
+// real-time listener
+db.collection('cafes').orderBy('city').onSnapshot(snapshot => {
+    let changes = snapshot.docChanges();
+    changes.forEach(change => {
+        //console.log(change.doc.data())
+        //console.log(change.type)
+        if(change.type == 'added'){
+            //add it to the DOM
+            renderCafe(change.doc) //runs the renderCafe function to add it
+        } else if (change.type == "removed"){
+            let li = cafeList.querySelector('[data-id=' + change.doc.id + ']'); //grabs the li element with matching id
+            cafeList.removeChild(li); //remove it from DOM
+        }
     })
 })
