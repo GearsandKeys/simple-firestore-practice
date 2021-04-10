@@ -6,10 +6,6 @@ const editForm =  document.getElementById("edit-doc");
 
 let currentId;
 
-
-
-
-
 function renderCafe(doc){
     let li = document.createElement('li');
     let name = document.createElement('span');
@@ -100,6 +96,13 @@ db.collection('cafes').orderBy('city').onSnapshot(snapshot => {
         } else if (change.type == "removed"){
             let li = cafeList.querySelector('[data-id=' + change.doc.id + ']'); //grabs the li element with matching id
             cafeList.removeChild(li); //remove it from DOM
+        } else if (change.type == "modified"){
+            //console.log("updated!")
+            renderCafe(change.doc)
+            let li = cafeList.querySelector('[data-id=' + change.doc.id + ']'); //grabs the li element with matching id
+            cafeList.removeChild(li);
+        } else {
+
         }
     })
 })
@@ -116,5 +119,6 @@ editForm.addEventListener('submit', (e) => {
     editForm.name.value = '';
     editForm.city.value = '';
     editForm.style.visibility = "hidden";
+    
     
 })
